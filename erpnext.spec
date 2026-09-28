@@ -107,11 +107,11 @@ tar -xf %{SOURCE1}
 %build
 
 %install
-python -m venv --system-site-packages %{buildroot}/usr/lib/erpnext/venv
-%{buildroot}/usr/lib/erpnext/venv/bin/pip install --no-binary :all: --no-index \
+python -m venv --system-site-packages --without-pip %{buildroot}/usr/lib/erpnext/venv
+/usr/bin/pip --python %{buildroot}/usr/lib/erpnext/venv/bin/python install --no-binary :all: --no-index \
 	--find-links sdists --no-build-isolation \
 	poetry-dynamic-versioning
-%{buildroot}/usr/lib/erpnext/venv/bin/pip install --no-binary :all: --no-index \
+/usr/bin/pip --python %{buildroot}/usr/lib/erpnext/venv/bin/python install --no-binary :all: --no-index \
 	--find-links sdists --no-build-isolation \
 	'PyMySQL==1.1.2' 'PyQRCode~=1.2.1' 'RestrictedPython~=8.1' \
 	'WeasyPrint==68.0' 'pydyf==0.12.1' 'bleach-allowlist~=1.0.3' \
@@ -123,10 +123,10 @@ python -m venv --system-site-packages %{buildroot}/usr/lib/erpnext/venv
 	'googlemaps~=4.10.0' 'plaid-python~=7.2.1' 'python-youtube~=0.9.9' \
 	'mt-940==4.30.0' 'vobject~=0.9.9' 'duckdb~=1.4.3' \
 	sdists/pypika-*.tar.gz sdists/gunicorn-*.tar.gz
-%{buildroot}/usr/lib/erpnext/venv/bin/pip install --no-binary :all: --no-index \
+/usr/bin/pip --python %{buildroot}/usr/lib/erpnext/venv/bin/python install --no-binary :all: --no-index \
 	--find-links sdists --no-build-isolation --no-deps \
 	pdfplumber
-%{buildroot}/usr/lib/erpnext/venv/bin/pip install --no-deps --no-build-isolation \
+/usr/bin/pip --python %{buildroot}/usr/lib/erpnext/venv/bin/python install --no-deps --no-build-isolation \
 	apps/frappe apps/erpnext
 find %{buildroot}/usr/lib/erpnext/venv/bin -type f -exec \
 	sed -i '1s|^#!.*python.*|#!/usr/lib/erpnext/venv/bin/python|' {} +
