@@ -1,0 +1,10 @@
+{
+ "bank-reconciliation-tool.bundle.js": "/assets/erpnext/dist/js/bank-reconciliation-tool.bundle.VGFVYGBS.js",
+ "erpnext.bundle.js": "/assets/erpnext/dist/js/erpnext.bundle.ZUTMX3JN.js",
+ "item-dashboard.bundle.js": "/assets/erpnext/dist/js/item-dashboard.bundle.SOOX5KXS.js",
+ "point-of-sale.bundle.js": "/assets/erpnext/dist/js/point-of-sale.bundle.7A3ZFT2N.js",
+ "bom_configurator.bundle.js": "/assets/erpnext/dist/js/bom_configurator.bundle.ZQW56QWW.js",
+ "erpnext-web.bundle.css": "/assets/erpnext/dist/css/erpnext-web.bundle.SK6TPT7O.css",
+ "erpnext.bundle.css": "/assets/erpnext/dist/css/erpnext.bundle.ALESCFSX.css",
+ "erpnext_email.bundle.css": "/assets/erpnext/dist/css/erpnext_email.bundle.HSE35R64.css"
+}
