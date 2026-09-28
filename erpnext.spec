@@ -5,14 +5,11 @@ Name:		erpnext
 %global __typelib_path ^$
 %global debug_package %{nil}
 # Upstream pins are for the bench installer. The system copies of those
-# modules are newer or older than the pin and are what we run against.
-# Drop upstream version pins. The auto generator turns pyproject
-# Requires-Dist into exact ranges the system packages do not satisfy.
-%global __requires_exclude_from ^/usr/lib/erpnext/
-# ERPNext 16.36.0 (GPLv3) with the Frappe 16.35.0 framework (MIT) it requires.
-# Python packages missing from the distribution are vendored as source
-# tarballs and compiled during the build. psycopg2-binary is not used;
-# the system psycopg2 module is. pypdfium2 is not packaged: its build
+# modules are what we run against.
+%global __requires_exclude_from /(frappe|erpnext)-.*dist-info/METADATA$
+%global __requires_exclude ^python3(\\.14)?dist\\((psycopg2-binary|ipython|barcodenumber|pypdfium2)\\)
+# ERPNext 16.36.0 (GPLv3) with the Frappe 16.35.0 framework (MIT).
+# Dependencies are system packages. pypdfium2 is not packaged: its build
 # downloads prebuilt pdfium binaries.
 Version:	16.36.0
 Release:	1
@@ -20,33 +17,50 @@ License:	GPL-3.0-or-later AND MIT
 Group:		Applications/Productivity
 URL:		https://frappe.io/erpnext
 Source0:	erpnext-%{version}-apps.tar.xz
-Source1:	erpnext-%{version}-sdists.tar.xz
 Source2:	common_site_config.json
 Source3:	erpnext.sysusers
 Source4:	README.install.omv
 Source5:	assets.json
 Source6:	assets-rtl.json
-BuildRequires:	gcc
-BuildRequires:	gcc-c++
-BuildRequires:	lib64python-devel
-BuildRequires:	pkgconfig(libffi)
-BuildRequires:	pkgconfig(cairo)
-BuildRequires:	pkgconfig(pango)
-BuildRequires:	pkgconfig(gdk-pixbuf-2.0)
-BuildRequires:	pkgconfig(libmariadb)
-BuildRequires:	python-dunamai
-BuildRequires:	python-flit-core
-BuildRequires:	python-hatchling
-BuildRequires:	python-pip
-BuildRequires:	python-pkgconfig
-BuildRequires:	python-poetry-core
-BuildRequires:	python-pybind11
-BuildRequires:	python-scikit-build-core
-BuildRequires:	python-setuptools
-BuildRequires:	python-setuptools_scm
-BuildRequires:	python-wheel
-BuildRequires:	cmake
-BuildRequires:	ninja
+BuildRequires:	python%{pyver}dist(flit-core)
+BuildRequires:	python%{pyver}dist(pip)
+BuildRequires:	python%{pyver}dist(wheel)
+BuildRequires:	python%{pyver}dist(setuptools)
+BuildRequires:	python%{pyver}dist(bleach-allowlist)
+BuildRequires:	python%{pyver}dist(dataclasses-json)
+BuildRequires:	python%{pyver}dist(duckdb)
+BuildRequires:	python%{pyver}dist(email-reply-parser)
+BuildRequires:	python%{pyver}dist(googlemaps)
+BuildRequires:	python%{pyver}dist(gunicorn)
+BuildRequires:	python%{pyver}dist(hiredis)
+BuildRequires:	python%{pyver}dist(holidays)
+BuildRequires:	python%{pyver}dist(markdown2)
+BuildRequires:	python%{pyver}dist(mt-940)
+BuildRequires:	python%{pyver}dist(num2words)
+BuildRequires:	python%{pyver}dist(openpyxl)
+BuildRequires:	python%{pyver}dist(pdfkit)
+BuildRequires:	python%{pyver}dist(pdfplumber)
+BuildRequires:	python%{pyver}dist(plaid-python)
+BuildRequires:	python%{pyver}dist(premailer)
+BuildRequires:	python%{pyver}dist(pydyf)
+BuildRequires:	python%{pyver}dist(pymysql)
+BuildRequires:	python%{pyver}dist(pyphen)
+BuildRequires:	python%{pyver}dist(pypika)
+BuildRequires:	python%{pyver}dist(pyqrcode)
+BuildRequires:	python%{pyver}dist(python-youtube)
+BuildRequires:	python%{pyver}dist(rauth)
+BuildRequires:	python%{pyver}dist(restrictedpython)
+BuildRequires:	python%{pyver}dist(rq)
+BuildRequires:	python%{pyver}dist(sql-metadata)
+BuildRequires:	python%{pyver}dist(sqlglot)
+BuildRequires:	python%{pyver}dist(terminaltables)
+BuildRequires:	python%{pyver}dist(tinyhtml5)
+BuildRequires:	python%{pyver}dist(traceback-with-variables)
+BuildRequires:	python%{pyver}dist(typing-inspect)
+BuildRequires:	python%{pyver}dist(vobject)
+BuildRequires:	python%{pyver}dist(weasyprint)
+BuildRequires:	python%{pyver}dist(xlsxwriter)
+BuildRequires:	python%{pyver}dist(zxcvbn)
 Requires:	nodejs
 Requires:	python
 Requires:	python-babel
@@ -84,6 +98,41 @@ Requires:	python-requests
 Requires:	python-sentry-sdk
 Requires:	python-sqlparse
 Requires:	python-tenacity
+Requires:	python-bleach-allowlist
+Requires:	python-dataclasses-json
+Requires:	python-duckdb
+Requires:	python-email-reply-parser
+Requires:	python-googlemaps
+Requires:	python-gunicorn
+Requires:	python-hiredis
+Requires:	python-holidays
+Requires:	python-markdown2
+Requires:	python-mt-940
+Requires:	python-num2words
+Requires:	python-openpyxl
+Requires:	python-pdfkit
+Requires:	python-pdfplumber
+Requires:	python-plaid-python
+Requires:	python-premailer
+Requires:	python-pydyf
+Requires:	python-pymysql
+Requires:	python-pyphen
+Requires:	python-pypika
+Requires:	python-pyqrcode
+Requires:	python-python-youtube
+Requires:	python-rauth
+Requires:	python-restrictedpython
+Requires:	python-rq
+Requires:	python-sql-metadata
+Requires:	python-sqlglot
+Requires:	python-terminaltables
+Requires:	python-tinyhtml5
+Requires:	python-traceback-with-variables
+Requires:	python-typing-inspect
+Requires:	python-vobject
+Requires:	python-weasyprint
+Requires:	python-xlsxwriter
+Requires:	python-zxcvbn
 Requires:	python-unidecode
 Requires:	python-websockets
 Requires:	python-werkzeug
@@ -113,33 +162,16 @@ realtime service on port 9000. The site is installed disabled.
 %prep
 %autosetup -c -T -D
 tar -xf %{SOURCE0}
-tar -xf %{SOURCE1}
 
 %build
+# Local wheels only. Dependencies are already installed BuildRequires.
+mkdir -p %{_builddir}/wheels
+pip wheel --wheel-dir %{_builddir}/wheels --no-deps --no-build-isolation --no-index \
+	apps/frappe apps/erpnext
 
 %install
-# Missing modules go in a private directory. Everything else is imported
-# from the system Python path. sqlparse is the system package.
-install -d %{buildroot}/usr/lib/erpnext/python
-/usr/bin/pip install --target %{_builddir}/pybuild --no-binary :all: --no-index \
-	--find-links sdists --no-build-isolation --no-deps poetry-dynamic-versioning
-export PYTHONPATH=%{_builddir}/pybuild${PYTHONPATH:+:$PYTHONPATH}
-/usr/bin/pip install --target %{buildroot}/usr/lib/erpnext/python --no-binary :all: --no-index \
-	--find-links sdists --no-build-isolation --no-deps \
-	'PyMySQL==1.1.2' 'PyQRCode~=1.2.1' 'RestrictedPython~=8.1' \
-	'WeasyPrint==68.0' 'pydyf==0.12.1' 'bleach-allowlist~=1.0.3' \
-	'email-reply-parser~=0.5.12' 'markdown2~=2.5.4' 'num2words~=0.5.14' \
-	'openpyxl~=3.1.5' 'xlsxwriter~=3.2.9' 'pdfkit~=1.0.0' \
-	'premailer~=3.10.0' 'rauth~=0.7.3' 'hiredis~=3.3.0' 'rq==2.6.1' \
-	'sql_metadata~=3.0.1' 'terminaltables~=3.1.10' \
-	'traceback-with-variables~=2.2.1' 'zxcvbn~=4.5.0' 'holidays~=0.87' \
-	'googlemaps~=4.10.0' 'plaid-python~=7.2.1' 'python-youtube~=0.9.9' \
-	'mt-940==4.30.0' 'vobject~=0.9.9' 'duckdb~=1.4.3' \
-	cssselect2 pyphen tinyhtml5 et_xmlfile marshmallow sqlglot \
-	typing_inspect dataclasses-json \
-	sdists/pypika-*.tar.gz sdists/gunicorn-*.tar.gz pdfplumber
-/usr/bin/pip install --target %{buildroot}/usr/lib/erpnext/python --no-deps --no-build-isolation \
-	apps/frappe apps/erpnext
+pip install --root %{buildroot} --no-deps --no-index --no-cache-dir \
+	--find-links %{_builddir}/wheels %{_builddir}/wheels/*.whl
 
 install -d %{buildroot}/usr/lib/erpnext
 cp -a apps %{buildroot}/usr/lib/erpnext/apps
@@ -154,7 +186,6 @@ install -d %{buildroot}/usr/bin
 cat > %{buildroot}/usr/bin/erpnext << 'EOF'
 #!/bin/sh
 export FRAPPE_BENCH_ROOT=/usr/lib/erpnext
-export PYTHONPATH=/usr/lib/erpnext/python
 cd /var/lib/erpnext/sites || exit 1
 exec /usr/bin/python -m frappe.utils.bench_helper frappe "$@"
 EOF
@@ -164,8 +195,8 @@ install -d %{buildroot}/var/lib/erpnext/sites/assets
 cp %{SOURCE2} %{buildroot}/var/lib/erpnext/sites/common_site_config.json
 printf 'frappe\nerpnext\n' > %{buildroot}/var/lib/erpnext/sites/apps.txt
 cp %{SOURCE5} %{SOURCE6} %{buildroot}/var/lib/erpnext/sites/assets/
-frappe_public=$(find %{buildroot}/usr/lib/erpnext/python -type d -path '*/frappe/public' | head -1)
-erpnext_public=$(find %{buildroot}/usr/lib/erpnext/python -type d -path '*/erpnext/public' | head -1)
+frappe_public=$(find %{buildroot}%{python_sitelib} -type d -path '*/frappe/public' | head -1)
+erpnext_public=$(find %{buildroot}%{python_sitelib} -type d -path '*/erpnext/public' | head -1)
 ln -s "${frappe_public#%{buildroot}}" %{buildroot}/var/lib/erpnext/sites/assets/frappe
 ln -s "${erpnext_public#%{buildroot}}" %{buildroot}/var/lib/erpnext/sites/assets/erpnext
 
@@ -220,7 +251,6 @@ Type=simple
 User=erpnext
 Group=erpnext
 Environment=FRAPPE_BENCH_ROOT=/usr/lib/erpnext
-Environment=PYTHONPATH=/usr/lib/erpnext/python
 WorkingDirectory=/var/lib/erpnext/sites
 ExecStart=/usr/bin/python -m gunicorn --bind 127.0.0.1:8000 --workers 2 --timeout 120 frappe.app:application
 Restart=on-failure
@@ -329,7 +359,10 @@ cp %{SOURCE4} .
 %files
 %doc README.install.omv
 %dir /usr/lib/erpnext
-/usr/lib/erpnext/python
+%{python_sitelib}/frappe
+%{python_sitelib}/frappe-*.dist-info
+%{python_sitelib}/erpnext
+%{python_sitelib}/erpnext-*.dist-info
 /usr/lib/erpnext/apps
 /usr/lib/erpnext/sites
 /usr/bin/erpnext
