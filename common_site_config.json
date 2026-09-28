@@ -1,0 +1,12 @@
+{
+	"db_host": "127.0.0.1",
+	"db_port": 3306,
+	"redis_cache": "unix:///run/redis/erpnext-cache/redis.sock",
+	"redis_queue": "unix:///run/redis/erpnext-queue/redis.sock",
+	"redis_socketio": "unix:///run/redis/erpnext-socketio/redis.sock",
+	"socketio_port": 9000,
+	"webserver_port": 8000,
+	"serve_default_site": true,
+	"developer_mode": 0,
+	"restart_supervisor_on_update": false
+}
