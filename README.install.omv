@@ -6,7 +6,8 @@ redis@erpnext-cache, redis@erpnext-queue and redis@erpnext-socketio.
 
 This package bundles Frappe 16.35.0. Python dependencies that are
 not already in the distribution are built from source into
-/usr/lib/erpnext/venv. psycopg2-binary and pypdfium2 are not
+/usr/lib/erpnext/python, which is put on PYTHONPATH. The interpreter
+is the system Python. psycopg2-binary and pypdfium2 are not
 included: PostgreSQL uses the system psycopg2 module, and PDF page
 rasterization that needs pdfium is unavailable.
 

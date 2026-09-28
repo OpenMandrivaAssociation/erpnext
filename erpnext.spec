@@ -82,6 +82,7 @@ Requires:	python-rapidfuzz
 Requires:	python-redis
 Requires:	python-requests
 Requires:	python-sentry-sdk
+Requires:	python-sqlparse
 Requires:	python-tenacity
 Requires:	python-unidecode
 Requires:	python-websockets
@@ -117,29 +118,28 @@ tar -xf %{SOURCE1}
 %build
 
 %install
-python -m venv --system-site-packages --without-pip %{buildroot}/usr/lib/erpnext/venv
-/usr/bin/pip --python %{buildroot}/usr/lib/erpnext/venv/bin/python install --no-binary :all: --no-index \
-	--find-links sdists --no-build-isolation \
-	poetry-dynamic-versioning
-/usr/bin/pip --python %{buildroot}/usr/lib/erpnext/venv/bin/python install --no-binary :all: --no-index \
-	--find-links sdists --no-build-isolation \
+# Missing modules go in a private directory. Everything else is imported
+# from the system Python path. sqlparse is the system package.
+install -d %{buildroot}/usr/lib/erpnext/python
+/usr/bin/pip install --target %{_builddir}/pybuild --no-binary :all: --no-index \
+	--find-links sdists --no-build-isolation --no-deps poetry-dynamic-versioning
+export PYTHONPATH=%{_builddir}/pybuild${PYTHONPATH:+:$PYTHONPATH}
+/usr/bin/pip install --target %{buildroot}/usr/lib/erpnext/python --no-binary :all: --no-index \
+	--find-links sdists --no-build-isolation --no-deps \
 	'PyMySQL==1.1.2' 'PyQRCode~=1.2.1' 'RestrictedPython~=8.1' \
 	'WeasyPrint==68.0' 'pydyf==0.12.1' 'bleach-allowlist~=1.0.3' \
 	'email-reply-parser~=0.5.12' 'markdown2~=2.5.4' 'num2words~=0.5.14' \
 	'openpyxl~=3.1.5' 'xlsxwriter~=3.2.9' 'pdfkit~=1.0.0' \
 	'premailer~=3.10.0' 'rauth~=0.7.3' 'hiredis~=3.3.0' 'rq==2.6.1' \
-	'sql_metadata~=3.0.1' 'sqlparse~=0.6.0' 'terminaltables~=3.1.10' \
+	'sql_metadata~=3.0.1' 'terminaltables~=3.1.10' \
 	'traceback-with-variables~=2.2.1' 'zxcvbn~=4.5.0' 'holidays~=0.87' \
 	'googlemaps~=4.10.0' 'plaid-python~=7.2.1' 'python-youtube~=0.9.9' \
 	'mt-940==4.30.0' 'vobject~=0.9.9' 'duckdb~=1.4.3' \
-	sdists/pypika-*.tar.gz sdists/gunicorn-*.tar.gz
-/usr/bin/pip --python %{buildroot}/usr/lib/erpnext/venv/bin/python install --no-binary :all: --no-index \
-	--find-links sdists --no-build-isolation --no-deps \
-	pdfplumber
-/usr/bin/pip --python %{buildroot}/usr/lib/erpnext/venv/bin/python install --no-deps --no-build-isolation \
+	cssselect2 pyphen tinyhtml5 et_xmlfile marshmallow sqlglot \
+	typing_inspect dataclasses-json \
+	sdists/pypika-*.tar.gz sdists/gunicorn-*.tar.gz pdfplumber
+/usr/bin/pip install --target %{buildroot}/usr/lib/erpnext/python --no-deps --no-build-isolation \
 	apps/frappe apps/erpnext
-find %{buildroot}/usr/lib/erpnext/venv/bin -type f -exec \
-	sed -i '1s|^#!.*python.*|#!/usr/lib/erpnext/venv/bin/python|' {} +
 
 install -d %{buildroot}/usr/lib/erpnext
 cp -a apps %{buildroot}/usr/lib/erpnext/apps
@@ -154,8 +154,9 @@ install -d %{buildroot}/usr/bin
 cat > %{buildroot}/usr/bin/erpnext << 'EOF'
 #!/bin/sh
 export FRAPPE_BENCH_ROOT=/usr/lib/erpnext
+export PYTHONPATH=/usr/lib/erpnext/python
 cd /var/lib/erpnext/sites || exit 1
-exec /usr/lib/erpnext/venv/bin/python -m frappe.utils.bench_helper frappe "$@"
+exec /usr/bin/python -m frappe.utils.bench_helper frappe "$@"
 EOF
 chmod 0755 %{buildroot}/usr/bin/erpnext
 
@@ -163,8 +164,8 @@ install -d %{buildroot}/var/lib/erpnext/sites/assets
 cp %{SOURCE2} %{buildroot}/var/lib/erpnext/sites/common_site_config.json
 printf 'frappe\nerpnext\n' > %{buildroot}/var/lib/erpnext/sites/apps.txt
 cp %{SOURCE5} %{SOURCE6} %{buildroot}/var/lib/erpnext/sites/assets/
-frappe_public=$(find %{buildroot}/usr/lib/erpnext/venv -type d -path '*/site-packages/frappe/public' | head -1)
-erpnext_public=$(find %{buildroot}/usr/lib/erpnext/venv -type d -path '*/site-packages/erpnext/public' | head -1)
+frappe_public=$(find %{buildroot}/usr/lib/erpnext/python -type d -path '*/frappe/public' | head -1)
+erpnext_public=$(find %{buildroot}/usr/lib/erpnext/python -type d -path '*/erpnext/public' | head -1)
 ln -s "${frappe_public#%{buildroot}}" %{buildroot}/var/lib/erpnext/sites/assets/frappe
 ln -s "${erpnext_public#%{buildroot}}" %{buildroot}/var/lib/erpnext/sites/assets/erpnext
 
@@ -219,8 +220,9 @@ Type=simple
 User=erpnext
 Group=erpnext
 Environment=FRAPPE_BENCH_ROOT=/usr/lib/erpnext
+Environment=PYTHONPATH=/usr/lib/erpnext/python
 WorkingDirectory=/var/lib/erpnext/sites
-ExecStart=/usr/lib/erpnext/venv/bin/gunicorn --bind 127.0.0.1:8000 --workers 2 --timeout 120 frappe.app:application
+ExecStart=/usr/bin/python -m gunicorn --bind 127.0.0.1:8000 --workers 2 --timeout 120 frappe.app:application
 Restart=on-failure
 
 [Install]
@@ -327,7 +329,7 @@ cp %{SOURCE4} .
 %files
 %doc README.install.omv
 %dir /usr/lib/erpnext
-/usr/lib/erpnext/venv
+/usr/lib/erpnext/python
 /usr/lib/erpnext/apps
 /usr/lib/erpnext/sites
 /usr/bin/erpnext
