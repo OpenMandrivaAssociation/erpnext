@@ -2,7 +2,7 @@ Summary:	Open source ERP and accounting
 Name:		erpnext
 %global __typelib_path ^$
 %global debug_package %{nil}
-%global __requires_exclude_from /erpnext-.*dist-info/METADATA$
+%global __requires_exclude_from /erpnext-.*\\.dist-info$
 %global __requires_exclude ^python3(\\.14)?dist\\((barcodenumber|pypdfium2)\\)
 # ERPNext 16.36 requires Frappe >= 16.21 and < 17. Frappe is a separate
 # package because the framework is used without ERPNext.
