@@ -52,7 +52,7 @@ tar -xf %{SOURCE0}
 %build
 mkdir -p %{_builddir}/wheels
 pip wheel --wheel-dir %{_builddir}/wheels --no-deps --no-build-isolation --no-index \
-	erpnext
+	./erpnext
 
 %install
 pip install --root %{buildroot} --no-deps --no-index --no-cache-dir \
