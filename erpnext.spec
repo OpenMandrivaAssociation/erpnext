@@ -3,11 +3,11 @@ Name:		erpnext
 %global __typelib_path ^$
 %global debug_package %{nil}
 %global __requires_exclude_from /erpnext-.*\\.dist-info$
-%global __requires_exclude ^python3(\\.14)?dist\\((barcodenumber|pypdfium2)\\)
+%global __requires_exclude ^python3(\\.1[45])?dist\\((barcodenumber|pypdfium2)\\)
 # ERPNext 16.36 requires Frappe >= 16.21 and < 17. Frappe is a separate
 # package because the framework is used without ERPNext.
 Version:	16.36.0
-Release:	1
+Release:	2
 License:	GPL-3.0-or-later
 Group:		Applications/Productivity
 URL:		https://frappe.io/erpnext
